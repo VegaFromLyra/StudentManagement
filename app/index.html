@@ -1,0 +1,32 @@
+<!doctype html>
+<html ng-app="myApp">
+<head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <!-- Angular stuff -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+    <script src="app.js"></script>
+
+    <!-- Parse -->
+    <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.3.5.min.js"></script>
+</head>
+
+<script type="text/javascript">
+    Parse.initialize("KGxHRY1i2W1plkO5rWORg8YQLaKjcwTvs9BIpjyj", "poeOwB2Rw12qXJh90fsXkRhfCBgTIDkQzvb9B0JI");
+</script>
+
+<body>
+
+<div ng-controller="HomeController" ng-view/>
+
+<div ng-controller="NewAccountController" ng-view/>
+
+</body>
+</html>

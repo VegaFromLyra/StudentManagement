@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+
+<div class="container">
+    <form name="signup_form" novalidate ng-submit="signup_form.$valid && signupForm()" ng-hide="showConfirm">
+        <div class="form-group">
+            <h4 class=text-left" >Sign up!</h4>
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text"
+                       placeholder="Name"
+                       name="name"
+                       ng-model="signup.name"
+                       ng-minlength=3
+                       ng-maxlength=20 required
+                       class="form-control"/>
+                <div
+                     ng-show="signup_form.name.$dirty && signup_form.name.$invalid">
+                    <small class="has-error"
+                           ng-show="signup_form.name.$error.required">
+                        Your name is required.
+                    </small>
+                    <small class="has-error"
+                           ng-show="signup_form.name.$error.minlength">
+                        Your name is required to be at least 3 characters
+                    </small>
+                    <small
+                           ng-show="signup_form.name.$error.maxlength">
+                        Your name cannot be longer than 20 characters
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label name="email">Email</label>
+                <input type="email"
+                       placeholder="Email Address"
+                       name="email"
+                       ng-model="signup.email"
+                       required
+                       class="form-control"/>
+                <div class="error-container"
+                     ng-show="signup_form.email.$dirty && signup_form.email.$invalid">
+                    <small
+                           ng-show="signup_form.email.$error.required">
+                        Your email is required.
+                    </small>
+                    <small
+                           ng-show="signup_form.email.$error.minlength">
+                        Your email is required to be at least 3 characters
+                    </small>
+                    <small
+                           ng-show="signup_form.email.$error.email">
+                        That is not a valid email. Please input a valid email.
+                    </small>
+                    <small
+                           ng-show="signup_form.email.$error.maxlength">
+                        Your email cannot be longer than 20 characters
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label name="password">Create password</label>
+                <input type="password"
+                       placeholder="Enter new password"
+                       name="password"
+                       ng-model="signup.password"
+                       required
+                       ng-minlength="6"
+                       class="form-control"/>
+                <div class="error-container"
+                        ng-show="signup_form.password.$dirty && signup_form.password.$invalid">
+                    <small
+                            ng-show="signup_form.password.$error.required">
+                        Your password is required.
+                    </small>
+                    <small
+                            ng-show="signup_form.password.$error.minlength">
+                        Your password should at least be 6 characters long.
+                    </small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label name="password">Confirm password</label>
+                <input type="password"
+                       placeholder="Confirm Password"
+                       name="confirmedPassword"
+                       ng-model="signup.confirmedPassword"
+                       required
+                       ng-minlength="6"
+                       are-equal={{signup.password}}
+                       class="form-control"
+                        />
+                <div class="error-container"
+                     ng-show="signup_form.confirmedPassword.$dirty && signup_form.confirmedPassword.$invalid">
+                    <small
+                            ng-show="signup_form.confirmedPassword.$error.required">
+                        Your password is required.
+                    </small>
+                    <small
+                            ng-show="signup_form.confirmedPassword.$error.minlength">
+                        Your password should at least be 6 characters long.
+                    </small>
+                    <small
+                            ng-show="signup_form.confirmedPassword.$dirty &&
+                             signup_form.confirmedPassword.$error.areEqual">
+                        Passwords should match
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+
+    <div class="col-md-12 confirmation" ng-show="showConfirm">
+        <h1>You are all set!</h1>
+    </div>
+</div>
+
+</body>
+</html>
