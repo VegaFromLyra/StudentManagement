@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fe519fc-1557-48e1-97a2-aa96f7825855" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/index-async.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/view1/view1.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/view1/view1.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/view1/view1_test.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/view2/view2.html" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/view2/view2.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/view2/view2_test.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/parse-js-blank-1.3.5.zip" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/newscast.mp3" afterPath="" />
     </list>
     <ignored path="StudentManagement.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,8 +39,8 @@
       <file leaf-file-name="app.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/app.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1380">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.73255813" vertical-offset="0" max-vertical-offset="1380">
+              <caret line="21" column="65" selection-start-line="21" selection-start-column="65" selection-end-line="21" selection-end-column="65" />
               <folding />
             </state>
           </provider>
@@ -198,8 +191,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/app.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1380">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.73255813" vertical-offset="0" max-vertical-offset="1380">
+          <caret line="21" column="65" selection-start-line="21" selection-start-column="65" selection-end-line="21" selection-end-column="65" />
           <folding />
         </state>
       </provider>
