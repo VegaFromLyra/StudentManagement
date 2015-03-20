@@ -7,21 +7,18 @@
     <div class="container">
         <h4>Sign in!</h4>
         <div class="form-group">
-            <label class="col-sm-2 control-label">Email</label>
+            <label class="col-sm-2 control-label">Username</label>
             <div class="col-sm-10">
-                <input type="email"
-                       name="email"
+                <input type="text"
+                       name="username"
                        class="form-control"
-                       placeholder="Email"
-                       ng-model="signin.email"
+                       placeholder="Username"
+                       ng-model="signin.username"
                        required/>
                 <div class="error-container"
-                     ng-show="signin_form.email.$dirty && signin_form.email.$invalid">
-                    <small ng-show="signin_form.email.$error.required">
-                        Your email is required.
-                    </small>
-                    <small ng-show="signin_form.email.$error.email">
-                        That is not a valid email. Please input a valid email.
+                     ng-show="signin_form.username.$dirty && signin_form.username.$invalid">
+                    <small ng-show="signin_form.username.$error.required">
+                        Your username is required.
                     </small>
                 </div>
             </div>

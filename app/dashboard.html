@@ -3,12 +3,28 @@
 <head>
 </head>
 <body>
+    <div class="row">
+        <div class="col-xs-6 col-md-4">
+            <button ng-click="displayStudents()" type="button" class="btn btn-link">Students</button>
+        </div>
+        <div class="col-xs-6 col-md-4">
+            <button ng-click="displayClasses()"  type="button" class="btn btn-link">Classes</button>
+        </div>
+        <div class="col-xs-6 col-md-4">
+            <button ng-click="displayEnrollments()" type="button" class="btn btn-link">Enrollment</button>
+        </div>
 
-<div class="row">
-    <div class="col-xs-6 col-md-4"><button type="button" class="btn btn-link">Students</button></div>
-    <div class="col-xs-6 col-md-4"><button type="button" class="btn btn-link">Classes</button></div>
-    <div class="col-xs-6 col-md-4"><button type="button" class="btn btn-link">Enrollment</button></div>
-</div>
+        <div class="container" ng-show="showStudents">
+            <button type="button" class="btn btn-link">Add Student</button>
+        </div>
 
+        <div class="container" ng-show="showClasses">
+            <button type="button" class="btn btn-link">Add Classes</button>
+        </div>
+
+        <div class="container" ng-show="showEnrollments">
+            <button type="button" class="btn btn-link">Add Enrollment</button>
+        </div>
+    </div>
 </body>
 </html>

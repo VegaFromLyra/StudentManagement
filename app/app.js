@@ -31,25 +31,28 @@ app.controller('NewAccountController', ['$scope', '$log', '$location', function(
 
     $scope.showConfirm = false;
 
+    $scope.showUserNameTaken = false;
+
     $scope.signupForm = function() {
 
         if ($scope.signup_form.$valid) {
 
             var UserAccount = Parse.Object.extend("UserAccount");
 
-            var userAccount = new UserAccount();
+            var user = new Parse.User();
 
-            userAccount.set("name", $scope.signup.name);
-            userAccount.set("email", $scope.signup.email);
-            userAccount.set("password", $scope.signup.password);
+            user.set("username", $scope.signup.username);
+            user.set("password", $scope.signup.password);
+            user.set("email", $scope.signup.email);
 
-            userAccount.save(null, {
+            user.signUp(null, {
                 success: function(object) {
                     $log.info('User saved');
                     $scope.$apply($scope.newUserAccountCreated());
                 },
                 error: function(model, error) {
                     $log.info('User not saved with error' + error.message);
+                    $scope.$apply($scope.errorInNewAccount());
                 }
             });
         }
@@ -59,6 +62,10 @@ app.controller('NewAccountController', ['$scope', '$log', '$location', function(
         $scope.showConfirm = true;
 
         $location.path('/login');
+    }
+
+    $scope.errorInNewAccount = function() {
+        $scope.showUserNameTaken = true;
     }
 
 }]);
@@ -104,13 +111,7 @@ app.controller('LoginController', ['$scope', '$location', function($scope, $loca
 
         if ($scope.signin_form.$valid) {
 
-            var UserAccount = Parse.Object.extend("UserAccount");
-
-            var query = new Parse.Query(UserAccount);
-
-            query.equalTo("email", $scope.signin.email);
-
-            query.find({
+            Parse.User.logIn($scope.signin.username, $scope.signin.password, {
                 success: function(results) {
                     $scope.$apply($scope.userAuthenticated(results));
                 },
@@ -118,27 +119,18 @@ app.controller('LoginController', ['$scope', '$location', function($scope, $loca
                     $scope.$apply($scope.userNotAuthenticated(error));
                 }
             });
-
         }
     }
 
     $scope.userAuthenticated = function(results) {
+        $scope.loginSuccessful = true;
 
-        // Assumes email addresses are unique
-        var user = results[0];
+        $scope.hasFormBeenSubmitted = true;
 
-        if ($scope.signin.password === user.get('password')) {
-
-            $scope.loginSuccessful = true;
-
-            $scope.hasFormBeenSubmitted = true;
-
-            $location.path('/dashboard');
-        }
+        $location.path('/dashboard');
     }
 
     $scope.userNotAuthenticated = function(error) {
-
         $scope.hasFormBeenSubmitted = true;
 
         $scope.loginSuccessful = false;
@@ -147,6 +139,32 @@ app.controller('LoginController', ['$scope', '$location', function($scope, $loca
 }]);
 
 app.controller('DashboardController', ['$scope', function($scope) {
+
+    $scope.displayStudents = function() {
+        $scope.showStudents = true;
+        $scope.showClasses = false;
+        $scope.showEnrollments = false;
+
+        var Student = Parse.Object.extend("Student");
+
+        var query = new Student();
+
+
+
+    }
+
+    $scope.displayClasses = function() {
+        $scope.showStudents = false;
+        $scope.showClasses = true;
+        $scope.showEnrollments = false;
+
+    }
+
+    $scope.displayEnrollments = function(){
+        $scope.showStudents = false;
+        $scope.showClasses = false;
+        $scope.showEnrollments = true;
+    }
 
 }]);
 

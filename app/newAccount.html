@@ -9,23 +9,24 @@
         <div class="form-group">
             <h4 class=text-left" >Sign up!</h4>
             <div class="form-group">
-                <label>Name</label>
+                <label>User Name</label>
                 <input type="text"
-                       placeholder="Name"
-                       name="name"
-                       ng-model="signup.name"
+                       placeholder="Enter your user name"
+                       name="username"
+                       ng-model="signup.username"
                        ng-minlength=3
                        required
                        class="form-control"/>
                 <div
-                     ng-show="signup_form.name.$dirty && signup_form.name.$invalid">
-                    <small class="has-error"
-                           ng-show="signup_form.name.$error.required">
-                        Your name is required.
+                     ng-show="signup_form.username.$dirty && signup_form.username.$invalid">
+                    <small ng-show="signup_form.username.$error.required">
+                        Username is required.
                     </small>
-                    <small class="has-error"
-                           ng-show="signup_form.name.$error.minlength">
-                        Your name is required to be at least 3 characters
+                    <small ng-show="signup_form.username.$error.minlength">
+                        Username is required to be at least 3 characters
+                    </small>
+                    <small ng-show="showUserNameTaken">
+                        Username is already taken. Try a different one!
                     </small>
                 </div>
             </div>
