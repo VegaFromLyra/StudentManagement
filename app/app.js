@@ -11,7 +11,11 @@ config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/login', {
         controller: 'LoginController',
         templateUrl: 'login.html'
-     })
+    });
+        $routeProvider.when('/dashboard', {
+        controller: 'DashboardController',
+        templateUrl: 'dashboard.html'
+    })
         .otherwise({redirectTo: '/'});
 }]);
 
@@ -23,7 +27,7 @@ app.controller('HomeController', ['$scope', '$location', function($scope, $locat
 
 }]);
 
-app.controller('NewAccountController', ['$scope', '$log', function($scope, $log) {
+app.controller('NewAccountController', ['$scope', '$log', '$location', function($scope, $log, $location) {
 
     $scope.showConfirm = false;
 
@@ -53,6 +57,8 @@ app.controller('NewAccountController', ['$scope', '$log', function($scope, $log)
 
     $scope.newUserAccountCreated = function() {
         $scope.showConfirm = true;
+
+        $location.path('/login');
     }
 
 }]);
@@ -88,15 +94,13 @@ app.directive('areEqual', [ function() {
     };
 }]);
 
-app.controller('LoginController', ['$scope', function($scope){
+app.controller('LoginController', ['$scope', '$location', function($scope, $location){
 
     $scope.loginSuccessful = false;
 
     $scope.hasFormBeenSubmitted = false;
 
     $scope.signin = function() {
-
-        $scope.hasFormBeenSubmitted = true;
 
         if ($scope.signin_form.$valid) {
 
@@ -124,16 +128,26 @@ app.controller('LoginController', ['$scope', function($scope){
         var user = results[0];
 
         if ($scope.signin.password === user.get('password')) {
+
             $scope.loginSuccessful = true;
+
+            $scope.hasFormBeenSubmitted = true;
+
+            $location.path('/dashboard');
         }
     }
 
     $scope.userNotAuthenticated = function(error) {
+
+        $scope.hasFormBeenSubmitted = true;
+
         $scope.loginSuccessful = false;
     }
 
 }]);
 
+app.controller('DashboardController', ['$scope', function($scope) {
 
+}]);
 
 
