@@ -145,12 +145,6 @@ app.controller('DashboardController', ['$scope', function($scope) {
         $scope.showClasses = false;
         $scope.showEnrollments = false;
 
-        var Student = Parse.Object.extend("Student");
-
-        var query = new Student();
-
-
-
     }
 
     $scope.displayClasses = function() {
@@ -164,6 +158,14 @@ app.controller('DashboardController', ['$scope', function($scope) {
         $scope.showStudents = false;
         $scope.showClasses = false;
         $scope.showEnrollments = true;
+    }
+
+    $scope.addStudent = function() {
+
+        $scope.showAddStudent = true;
+
+
+
     }
 
 }]);
