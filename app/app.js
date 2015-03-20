@@ -7,7 +7,11 @@ config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/newAccount', {
         controller: 'NewAccountController',
         templateUrl: 'newAccount.html'
-    })
+    });
+        $routeProvider.when('/login', {
+        controller: 'LoginController',
+        templateUrl: 'login.html'
+     })
         .otherwise({redirectTo: '/'});
 }]);
 
@@ -38,14 +42,17 @@ app.controller('NewAccountController', ['$scope', '$log', function($scope, $log)
             userAccount.save(null, {
                 success: function(object) {
                     $log.info('User saved');
+                    $scope.$apply($scope.newUserAccountCreated());
                 },
                 error: function(model, error) {
                     $log.info('User not saved with error' + error.message);
                 }
             });
-
-            $scope.showConfirm = true;
         }
+    }
+
+    $scope.newUserAccountCreated = function() {
+        $scope.showConfirm = true;
     }
 
 }]);
@@ -79,6 +86,52 @@ app.directive('areEqual', [ function() {
         require: 'ngModel',
         link: link
     };
+}]);
+
+app.controller('LoginController', ['$scope', function($scope){
+
+    $scope.loginSuccessful = false;
+
+    $scope.hasFormBeenSubmitted = false;
+
+    $scope.signin = function() {
+
+        $scope.hasFormBeenSubmitted = true;
+
+        if ($scope.signin_form.$valid) {
+
+            var UserAccount = Parse.Object.extend("UserAccount");
+
+            var query = new Parse.Query(UserAccount);
+
+            query.equalTo("email", $scope.signin.email);
+
+            query.find({
+                success: function(results) {
+                    $scope.$apply($scope.userAuthenticated(results));
+                },
+                error: function(error) {
+                    $scope.$apply($scope.userNotAuthenticated(error));
+                }
+            });
+
+        }
+    }
+
+    $scope.userAuthenticated = function(results) {
+
+        // Assumes email addresses are unique
+        var user = results[0];
+
+        if ($scope.signin.password === user.get('password')) {
+            $scope.loginSuccessful = true;
+        }
+    }
+
+    $scope.userNotAuthenticated = function(error) {
+        $scope.loginSuccessful = false;
+    }
+
 }]);
 
 

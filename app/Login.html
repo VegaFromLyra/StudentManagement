@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<form class="form-horizontal" name="signin_form" ng-submit="signin_form.$valid && signin()" ng-hide="loginSuccessful">
+    <div class="container">
+        <h4>Sign in!</h4>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+                <input type="email"
+                       name="email"
+                       class="form-control"
+                       placeholder="Email"
+                       ng-model="signin.email"
+                       required/>
+                <div class="error-container"
+                     ng-show="signin_form.email.$dirty && signin_form.email.$invalid">
+                    <small ng-show="signin_form.email.$error.required">
+                        Your email is required.
+                    </small>
+                    <small ng-show="signin_form.email.$error.email">
+                        That is not a valid email. Please input a valid email.
+                    </small>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-10">
+                <input type="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="Password"
+                       ng-model="signin.password"
+                       required/>
+                <div class="error-container"
+                     ng-show="signin_form.password.$dirty && signin_form.password.$invalid">
+                    <small ng-show="signin_form.password.$error.required">
+                        Please enter your password
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <p ng-show="hasFormBeenSubmitted && !loginSuccessful">Wrong password. Please try again!</p>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Sign in</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="col-md-12 confirmation" ng-show="loginSuccessful">
+    <h1>Signed in!</h1>
+</div>
+
+</body>
+</html>

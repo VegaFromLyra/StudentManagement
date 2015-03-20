@@ -15,7 +15,7 @@
                        name="name"
                        ng-model="signup.name"
                        ng-minlength=3
-                       ng-maxlength=20 required
+                       required
                        class="form-control"/>
                 <div
                      ng-show="signup_form.name.$dirty && signup_form.name.$invalid">
@@ -26,10 +26,6 @@
                     <small class="has-error"
                            ng-show="signup_form.name.$error.minlength">
                         Your name is required to be at least 3 characters
-                    </small>
-                    <small
-                           ng-show="signup_form.name.$error.maxlength">
-                        Your name cannot be longer than 20 characters
                     </small>
                 </div>
             </div>
@@ -55,10 +51,6 @@
                     <small
                            ng-show="signup_form.email.$error.email">
                         That is not a valid email. Please input a valid email.
-                    </small>
-                    <small
-                           ng-show="signup_form.email.$error.maxlength">
-                        Your email cannot be longer than 20 characters
                     </small>
                 </div>
             </div>
