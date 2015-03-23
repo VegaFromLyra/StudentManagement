@@ -16,11 +16,11 @@
 
         <!-- Student section -->
         <div class="container" ng-show="showStudents">
-            <button ng-click="showStudentForm()" type="button" class="btn btn-link" ng-hide="shouldShowStudentForm">Add Student</button>
+            <button ng-click="addStudent()" type="button" class="btn btn-link" ng-hide="shouldShowStudentForm">Add Student</button>
 
-            <form class="form-horizontal" name="addStudent_form" ng-submit="addStudent()" ng-show="shouldShowStudentForm">
+            <form class="form-horizontal" name="addStudent_form" ng-submit="submitStudentForm()" ng-show="shouldShowStudentForm">
                 <div class="container">
-                    <h4 class=text-left" >Add Student</h4>
+                    <h4 class=text-left" >{{addStudent_form.title}}</h4>
                     <div class="form-group">
                         <label class="col-sm-2 control-label">First Name</label>
                         <div class="col-sm-10">
@@ -28,7 +28,7 @@
                                    name="firstName"
                                    class="form-control"
                                    placeholder="First Name"
-                                   ng-model="student.firstname"
+                                   ng-model="student.firstName"
                                    required/>
                             <div class="error-container"
                                  ng-show="addStudent_form.firstName.$dirty && addStudent_form.firstName.$invalid">
@@ -46,7 +46,7 @@
                                    name="lastName"
                                    class="form-control"
                                    placeholder="Last Name"
-                                   ng-model="student.lastname"
+                                   ng-model="student.lastName"
                                    required/>
                             <div class="error-container"
                                  ng-show="addStudent_form.lastName.$dirty && addStudent_form.lastName.$invalid">
@@ -72,39 +72,55 @@
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Photo</label>
                         <div class="col-sm-10">
-                            <img src='/profile.png' width="100" height="100" class="img-thumbnail"/>
+                            <img ng-src="{{student.photoUrl}}" width="100" height="100" class="img-thumbnail"/>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <div class="col-sm-offset-2 col-sm-10">
-                            <button type="submit" class="btn btn-default">Add Student</button>
+                            <button type="button" class="btn btn-default" ng-click="selectFile()">Upload Your Photo</button>
+                            <input type="file"
+                                   style="display:none"
+                                   id="file"
+                                   name='file'
+                                   onchange="angular.element(this).scope().fileNameChanged(this)"/>
                         </div>
                     </div>
+
+                    <div>
+                        <button type="submit" class="btn btn-default">{{addStudent_form.submitText}}</button>
+                    </div>
                 </div>
+
+
             </form>
 
             <div class="container">
+                <h4 class=text-left" >Current Students</h4>
 
-            <h4 class=text-left" >Current Students</h4>
-
-            <table class="table table-bordered">
-                <thead>
-                <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Age</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="student in students">
-                    <td>{{student.firstName}}</td>
-                    <td>{{student.lastName}}</td>
-                    <td>{{student.age}}</td>
-                </tr>
-                </tbody>
-            </table>
-
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Photo</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Age</th>
+                        <th>Modify</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="student in students">
+                        <td><img ng-src="{{student.photoUrl}}" width="100" height="100" class="img-thumbnail"></td>
+                        <td>{{student.firstName}}</td>
+                        <td>{{student.lastName}}</td>
+                        <td>{{student.age}}</td>
+                        <td>
+                            <button type="button" class="btn btn-link" ng-click="editStudent(student)">Edit</button>
+                            <button type="button" class="btn btn-link" ng-click="findAndDeleteStudent(student.id)">Delete</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
 
         </div>
