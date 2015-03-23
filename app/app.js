@@ -189,9 +189,6 @@ app.controller('DashboardController', ['$scope', '$location', function($scope, $
         var Student = Parse.Object.extend("Student");
         var query = new Parse.Query(Student);
 
-        // TODO - Better way to fetch all student records
-        query.notEqualTo("objectId", null);
-
         query.find({
             success: function(results){
 
@@ -209,7 +206,14 @@ app.controller('DashboardController', ['$scope', '$location', function($scope, $
     }
 
     $scope.studentsLoaded = function(results) {
-        $scope.students = results;
+
+        $scope.students = [];
+
+        _.each(results, function(result){
+            $scope.students.push(result.attributes)
+        });
+
+        // $scope.students = results;
     }
 
     $scope.showStudentForm = function() {
