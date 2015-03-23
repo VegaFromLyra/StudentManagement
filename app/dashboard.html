@@ -16,73 +16,97 @@
 
         <!-- Student section -->
         <div class="container" ng-show="showStudents">
-            <button ng-click="addStudent()" type="button" class="btn btn-link">Add Student</button>
+            <button ng-click="showStudentForm()" type="button" class="btn btn-link" ng-hide="shouldShowStudentForm">Add Student</button>
 
+            <form class="form-horizontal" name="addStudent_form" ng-submit="addStudent()" ng-show="shouldShowStudentForm">
+                <div class="container">
+                    <h4 class=text-left" >Add Student</h4>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">First Name</label>
+                        <div class="col-sm-10">
+                            <input type="text"
+                                   name="firstName"
+                                   class="form-control"
+                                   placeholder="First Name"
+                                   ng-model="student.firstname"
+                                   required/>
+                            <div class="error-container"
+                                 ng-show="addStudent_form.firstName.$dirty && addStudent_form.firstName.$invalid">
+                                <small ng-show="addStudent_form.firstName.$error.required">
+                                    First name is required.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
 
-            <form class="form-horizontal" name="addStudent_form" ng-show="showAddStudent">
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">First Name</label>
-                    <div class="col-sm-10">
-                        <input type="text"
-                               name="firstName"
-                               class="form-control"
-                               placeholder="First Name"
-                               ng-model="student.firstname"
-                               required/>
-                        <div class="error-container"
-                             ng-show="addStudent_form.firstName.$dirty && addStudent_form.firstName.$invalid">
-                            <small ng-show="addStudent_form.firstName.$error.required">
-                                First name is required.
-                            </small>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Last Name</label>
+                        <div class="col-sm-10">
+                            <input type="text"
+                                   name="lastName"
+                                   class="form-control"
+                                   placeholder="Last Name"
+                                   ng-model="student.lastname"
+                                   required/>
+                            <div class="error-container"
+                                 ng-show="addStudent_form.lastName.$dirty && addStudent_form.lastName.$invalid">
+                                <small ng-show="addStudent_form.lastName.$error.required">
+                                    Last name is required.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Age</label>
+                        <div class="col-sm-10">
+                            <input type="text"
+                                   name="age"
+                                   class="form-control"
+                                   placeholder="Age"
+                                   ng-model="student.age"
+                                   required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Photo</label>
+                        <div class="col-sm-10">
+                            <img src='/profile.png' width="100" height="100" class="img-thumbnail"/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-default">Add Student</button>
                         </div>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Last Name</label>
-                    <div class="col-sm-10">
-                        <input type="text"
-                               name="lastName"
-                               class="form-control"
-                               placeholder="Last Name"
-                               ng-model="student.lastname"
-                               required/>
-                        <div class="error-container"
-                             ng-show="addStudent_form.lastName.$dirty && addStudent_form.lastName.$invalid">
-                            <small ng-show="addStudent_form.lastName.$error.required">
-                                Last name is required.
-                            </small>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Age</label>
-                    <div class="col-sm-10">
-                        <input type="text"
-                               name="age"
-                               class="form-control"
-                               placeholder="Age"
-                               ng-model="student.age"
-                               required/>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="col-sm-2 control-label">Photo</label>
-                    <div class="col-sm-10">
-                        <img src="" alt="" class="img-rounded"/>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-default">Add Student</button>
-                    </div>
-                </div>
-
             </form>
 
+            <div class="container">
+
+            <h4 class=text-left" >Current Students</h4>
+
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Age</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--TODO: Ask Bansal what's the deal with attributes-->
+                <tr ng-repeat="student in students">
+                    <td>{{student.attributes.firstName}}</td>
+                    <td>{{student.attributes.lastName}}</td>
+                    <td>{{student.attributes.age}}</td>
+                </tr>
+                </tbody>
+            </table>
+
+            </div>
 
         </div>
 
