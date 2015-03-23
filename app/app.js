@@ -37,8 +37,6 @@ app.controller('NewAccountController', ['$scope', '$log', '$location', function(
 
         if ($scope.signup_form.$valid) {
 
-            var UserAccount = Parse.Object.extend("UserAccount");
-
             var user = new Parse.User();
 
             user.set("username", $scope.signup.username);
@@ -138,12 +136,14 @@ app.controller('LoginController', ['$scope', '$location', function($scope, $loca
 
 }]);
 
-app.controller('DashboardController', ['$scope', function($scope) {
+app.controller('DashboardController', ['$scope', '$location', function($scope, $location) {
+
 
     $scope.displayStudents = function() {
         $scope.showStudents = true;
         $scope.showClasses = false;
         $scope.showEnrollments = false;
+        $scope.loadStudents();
 
     }
 
@@ -154,7 +154,7 @@ app.controller('DashboardController', ['$scope', function($scope) {
 
     }
 
-    $scope.displayEnrollments = function(){
+    $scope.displayEnrollments = function() {
         $scope.showStudents = false;
         $scope.showClasses = false;
         $scope.showEnrollments = true;
@@ -162,10 +162,58 @@ app.controller('DashboardController', ['$scope', function($scope) {
 
     $scope.addStudent = function() {
 
-        $scope.showAddStudent = true;
+        if ($scope.addStudent_form.$valid) {
 
+            var Student = Parse.Object.extend("Student");
 
+            var student = new Student();
+            student.set("firstName", $scope.student.firstname);
+            student.set("lastName", $scope.student.lastname);
+            student.set("age", $scope.student.age);
 
+            // TODO - set photo
+
+            student.save(null, {
+                success: function(student) {
+                    $scope.$apply($scope.newStudentCreated())
+                },
+                error: function(student, error) {
+
+                }
+            });
+        }
+    }
+
+    $scope.loadStudents = function() {
+
+        var Student = Parse.Object.extend("Student");
+        var query = new Parse.Query(Student);
+
+        // TODO - Better way to fetch all student records
+        query.notEqualTo("objectId", null);
+
+        query.find({
+            success: function(results){
+
+                $scope.$apply($scope.studentsLoaded(results));
+            },
+            error: function(error) {
+
+            }
+        });
+    }
+
+    $scope.newStudentCreated = function() {
+        $scope.shouldShowStudentForm = false;
+        $scope.loadStudents();
+    }
+
+    $scope.studentsLoaded = function(results) {
+        $scope.students = results;
+    }
+
+    $scope.showStudentForm = function() {
+        $scope.shouldShowStudentForm = true;
     }
 
 }]);
