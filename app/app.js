@@ -143,7 +143,6 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
         $scope.showStudents = true;
         $scope.showClasses = false;
         $scope.showEnrollments = false;
-
         $scope.loadStudents();
 
     }
@@ -152,7 +151,7 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
         $scope.showStudents = false;
         $scope.showClasses = true;
         $scope.showEnrollments = false;
-
+        $scope.loadClasses();
     }
 
     $scope.displayEnrollments = function() {
@@ -273,11 +272,7 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
 
         query.find({
             success: function(results){
-
                 $scope.$apply($scope.studentsLoaded(results));
-            },
-            error: function(error) {
-
             }
         });
     }
@@ -359,6 +354,130 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
         $scope.student = student;
 
         $scope.shouldShowStudentForm = true;
+    }
+
+    $scope.saveClassUsingForm = function(classItem) {
+
+        classItem.set("name", $scope.class.name);
+        classItem.set("buildingName", $scope.class.buildingName);
+        classItem.set("floor", $scope.class.floor);
+
+        classItem.save(null, {
+            success: function (classItem) {
+                $scope.$apply($scope.classSaved());
+            },
+            error: function (classItem, error) {
+                $scope.$apply($scope.errorSavingClass());
+            }
+        })
+    }
+
+    $scope.submitClassForm = function() {
+
+        if ($scope.addClass_form.$valid) {
+
+            var Class = Parse.Object.extend("Class");
+
+            if ($scope.class.id != null) {
+
+                var query = new Parse.Query(Class);
+
+                query.equalTo("objectId", $scope.class.id);
+
+                query.find({
+                    success: function(results) {
+                        $scope.savedEditedClass(results[0]);
+                    },
+                    error: function(error) {
+                        $log.error("Could not find class with ID " + classItem.id);
+                    }
+                })
+            }
+            else {
+
+                var classItem = new Class();
+
+                $scope.saveClassUsingForm(classItem);
+            }
+        }
+
+    }
+
+    $scope.classSaved = function() {
+        $scope.addClass_form.submitted = true;
+        $scope.shouldShowClassForm = false;
+        $scope.loadClasses();
+    }
+
+    $scope.errorSavingClass = function() {
+        $scope.addClass_form.submitted = true;
+        $scope.addClass_form.errorSave = true;
+    }
+
+    $scope.loadClasses = function() {
+
+        var Class = Parse.Object.extend("Class");
+        var query = new Parse.Query(Class);
+
+        query.find({
+            success: function(results){
+                $scope.$apply($scope.classesLoaded(results));
+            }
+        });
+    }
+
+    $scope.classesLoaded = function(classes) {
+
+        $scope.classes = [];
+
+        _.each(classes, function(classItem){
+            $scope.classes.push(classItem);
+        });
+    }
+
+    $scope.addClass = function() {
+
+        $scope.class = {};
+
+        // TODO - Figure out how to reset form
+
+        $scope.shouldShowClassForm = true;
+
+        $scope.addClass_form.title = "Add Class";
+
+        $scope.addClass_form.submitText = "Submit";
+    }
+
+    $scope.editClass = function(classItem)
+    {
+        // Set form fields
+        $scope.shouldShowClassForm = true;
+
+        $scope.class = {};
+
+        $scope.class.id = classItem.id;
+        $scope.class.name = classItem.get('name');
+        $scope.class.buildingName = classItem.get('buildingName');
+        $scope.class.room = classItem.get('floor');
+
+        $scope.addClass_form.title = "Edit Class";
+
+        $scope.addClass_form.submitText = "Edit";
+    }
+
+    $scope.savedEditedClass = function(classItem) {
+        $scope.saveClassUsingForm(classItem);
+    }
+
+    $scope.deleteClass = function(classItem) {
+        classItem.destroy({
+            success: function(classItem) {
+                $scope.$apply($scope.loadClasses());
+            },
+            error: function(classItem, error) {
+                $log.error("Could not delete " + classItem.id);
+            }
+        })
     }
 
 }]);
