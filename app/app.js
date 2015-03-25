@@ -614,6 +614,7 @@ app.controller('RegistrationController', ['$scope', '$routeParams', '$log', '$lo
     $scope.deregister_form_submit = function() {
         var containsRelation = $scope.classItem.relation("contains");
         containsRelation.remove($scope.student);
+        $scope.classItem.save();
         $location.path('/dashboard');
     }
 
