@@ -15,6 +15,14 @@ config(['$routeProvider', function($routeProvider) {
         $routeProvider.when('/dashboard', {
         controller: 'DashboardController',
         templateUrl: 'dashboard.html'
+    });
+        $routeProvider.when('/registerStudent', {
+        controller: 'RegistrationController',
+        templateUrl: 'registerStudent.html'
+    });
+        $routeProvider.when('/deregisterStudent', {
+        controller: 'RegistrationController',
+        templateUrl: 'deRegisterStudent.html'
     })
         .otherwise({redirectTo: '/'});
 }]);
@@ -136,13 +144,13 @@ app.controller('LoginController', ['$scope', '$location', function($scope, $loca
 
 }]);
 
-app.controller('DashboardController', ['$scope', '$log', function($scope, $log) {
-
+app.controller('DashboardController', ['$scope', '$log', '$location', '$routeParams',
+    function($scope, $log, $location, $routeParams) {
 
     $scope.displayStudents = function() {
         $scope.showStudents = true;
         $scope.showClasses = false;
-        $scope.showEnrollments = false;
+        $scope.showRegistrations = false;
         $scope.loadStudents();
 
     }
@@ -150,14 +158,15 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
     $scope.displayClasses = function() {
         $scope.showStudents = false;
         $scope.showClasses = true;
-        $scope.showEnrollments = false;
+        $scope.showRegistrations = false;
         $scope.loadClasses();
     }
 
-    $scope.displayEnrollments = function() {
+    $scope.displayRegistrations = function() {
         $scope.showStudents = false;
         $scope.showClasses = false;
-        $scope.showEnrollments = true;
+        $scope.showRegistrations = true;
+        $scope.loadClasses();
     }
 
     $scope.submitStudentForm = function() {
@@ -225,8 +234,6 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
             }
         });
     }
-
-
 
     $scope.fileNameChanged = function(element) {
         $scope.uploadPhoto(element.files[0]);
@@ -299,7 +306,6 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
             $scope.students.push(student)
         });
     }
-
 
     $scope.findAndDeleteStudent = function(studentId) {
         var Student = Parse.Object.extend("Student");
@@ -433,6 +439,10 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
         _.each(classes, function(classItem){
             $scope.classes.push(classItem);
         });
+
+        // TODO - Is there a more de-coupled
+        // way to load registrations??
+        $scope.loadRegistrations();
     }
 
     $scope.addClass = function() {
@@ -448,8 +458,7 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
         $scope.addClass_form.submitText = "Submit";
     }
 
-    $scope.editClass = function(classItem)
-    {
+    $scope.editClass = function(classItem) {
         // Set form fields
         $scope.shouldShowClassForm = true;
 
@@ -480,6 +489,155 @@ app.controller('DashboardController', ['$scope', '$log', function($scope, $log) 
         })
     }
 
+    $scope.registerStudent = function(classItem) {
+        $location.path('/registerStudent/').search({className : classItem.get('name')});
+    }
+
+    $scope.loadRegistrations = function() {
+        $scope.registrations = [];
+
+        _.each($scope.classes, function(classItem) {
+            var relation = classItem.relation("contains");
+
+            relation.query().find({
+                success: function(list) {
+                    $scope.$apply($scope.registrationsLoaded(classItem, list))
+                }
+            });
+        });
+
+
+    }
+
+    $scope.registrationsLoaded = function(classItem, students) {
+
+        var registration = {};
+        registration.students = [];
+        registration.classItem = classItem;
+
+        _.each(students, function(student){
+            registration.students.push(student);
+        })
+
+        $scope.registrations.push(registration);
+    }
+
+    $scope.removeStudentFromClass = function(student, classItem) {
+        $location.path('/deregisterStudent/').search({classId: classItem.id, studentId: student.id});
+    }
+
 }]);
 
+app.controller('RegistrationController', ['$scope', '$routeParams', '$log', '$location',
+    function($scope, $routeParams, $log, $location){
 
+    $scope.initialiseStudentAndClass = function(student, classItem) {
+        $scope.student = student;
+        $scope.classItem = classItem;
+
+        $scope.registration = {};
+        $scope.registration.class = classItem.get('name');
+        $scope.registration.studentFirstName = student.get('firstName');
+        $scope.registration.studentLastName = student.get('lastName');
+    }
+
+    $scope.findClassAndStudent = function(classId, studentId) {
+
+        var Student = Parse.Object.extend("Student");
+
+        var query = new Parse.Query(Student);
+
+        query.equalTo("objectId", studentId);
+
+        query.find({
+            success: function(results) {
+
+                var student = results[0];
+
+                var Class = Parse.Object.extend("Class");
+
+                var query = new Parse.Query(Class);
+
+                query.equalTo("objectId", classId);
+
+                query.find({
+                    success: function(results) {
+                        $scope.$apply($scope.initialiseStudentAndClass(student, results[0]));
+                    }
+                })
+
+            }
+        });
+    }
+
+    if ($routeParams.className) {
+
+        $scope.registration = {};
+
+        $scope.getClass = function(className) {
+            var Class = Parse.Object.extend("Class");
+
+            var query = new Parse.Query(Class);
+
+            query.equalTo("name", className);
+
+            query.find({
+                success: function(results) {
+
+                    if (results.length > 1) {
+                        $log.info("Multiple classes with same name: " + results[0].get('name'));
+                    }
+                    $scope.$apply($scope.classRetrieved(results));
+                },
+                error: function(error) {
+                    $log.error("Could not find class with name: " + $scope.registration.class);
+                }
+            });
+        }
+
+        $scope.getClass($routeParams.className);
+    }
+    else if ($routeParams.classId && $routeParams.studentId) {
+
+        $scope.findClassAndStudent($routeParams.classId, $routeParams.studentId);
+    }
+
+    $scope.register_form_submit = function() {
+
+        $scope.register_form.submitted = false;
+
+        if ($scope.register_form.$valid) {
+            var student = $scope.findAndRegisterStudent($scope.registration.studentFirstName, $scope.registration.studentLastName);
+        }
+    }
+
+    $scope.deregister_form_submit = function() {
+        var containsRelation = $scope.classItem.relation("contains");
+        containsRelation.remove($scope.student);
+        $location.path('/dashboard');
+    }
+
+    $scope.classRetrieved = function(results) {
+        $scope.class = results[0];
+        $scope.registration.class = results[0].get('name');
+    }
+
+    $scope.registerRetrievedStudent = function(results) {
+        $scope.register_form.submitted = true;
+        $scope.register_form.studentDoesNotExist = false;
+        
+        $scope.student = results[0];
+
+        var relation = $scope.class.relation("contains");
+        relation.add($scope.student);
+        $scope.class.save();
+
+        $location.path('/dashboard');
+    }
+
+    $scope.noStudentRetrieved = function(firstName, lastName) {
+        $scope.register_form.submitted = true;
+        $scope.register_form.studentDoesNotExist = true;
+    }
+
+}]);

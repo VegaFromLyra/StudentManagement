@@ -11,7 +11,7 @@
             <button ng-click="displayClasses()"  type="button" class="btn btn-link">Classes</button>
         </div>
         <div class="col-xs-6 col-md-4">
-            <button ng-click="displayEnrollments()" type="button" class="btn btn-link">Enrollment</button>
+            <button ng-click="displayRegistrations()" type="button" class="btn btn-link">Registration</button>
         </div>
 
         <!-- Student section -->
@@ -222,9 +222,34 @@
 
         </div>
 
-        <!-- Enrollment section -->
-        <div class="container" ng-show="showEnrollments">
-            <button ng-click="addEnrollment()" type="button" class="btn btn-link">Add Enrollment</button>
+        <!-- Registration section -->
+        <div class="container" ng-show="showRegistrations">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Class</th>
+                    <th>Students</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="registration in registrations">
+                        <td>{{registration.classItem.get('name')}}</td>
+                        <td>
+                            <ul>
+                                <li ng-repeat="student in registration.students">
+                                    <button type="button"
+                                            class="btn btn-link"
+                                            ng-click="removeStudentFromClass(student, registration.classItem)">
+                                        {{student.get('firstName')}} {{student.get('lastName')}}
+                                    </button>
+                                </li>
+                            </ul>
+                            <button type="button" class="btn btn-info" ng-click="registerStudent(registration.classItem)">Add</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
     </div>
 </body>
