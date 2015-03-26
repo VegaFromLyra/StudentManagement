@@ -26,4 +26,22 @@ app.service('UserService', ['$q', '$rootScope',
 
         return deferred.promise;
     }
+
+    this.logIn = function(username, password) {
+
+        var deferred = $q.defer();
+
+        Parse.User.logIn(username, password, {
+            success: function(results) {
+                deferred.resolve(results);
+                $rootScope.$apply();
+            },
+            error: function(error) {
+                deferred.reject(error);
+                $rootScope.$apply();
+            }
+        });
+
+        return deferred.promise;
+    }
 }]);

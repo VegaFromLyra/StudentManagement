@@ -1,6 +1,6 @@
 var app = angular.module("myApp");
 
-app.controller('SignInController', ['$scope', '$location', function($scope, $location){
+app.controller('SignInController', ['$scope', '$location', 'UserService', function($scope, $location, userService){
 
     $scope.loginSuccessful = false;
 
@@ -10,14 +10,12 @@ app.controller('SignInController', ['$scope', '$location', function($scope, $loc
 
         if ($scope.signin_form.$valid) {
 
-            Parse.User.logIn($scope.signin.username, $scope.signin.password, {
-                success: function(results) {
-                    $scope.$apply($scope.userAuthenticated(results));
-                },
-                error: function(error) {
-                    $scope.$apply($scope.userNotAuthenticated(error));
-                }
-            });
+            userService.logIn($scope.signin.username, $scope.signin.password)
+                .then(function(results) {
+                    $scope.userAuthenticated(results);
+                }, function(error) {
+                    $scope.userNotAuthenticated(error);
+                });
         }
     }
 
