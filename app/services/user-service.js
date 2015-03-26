@@ -1,7 +1,7 @@
 var app = angular.module("myApp");
 
-app.service('UserService', ['$q', '$location', '$log',
-    function($q, $location, $log){
+app.service('UserService', ['$q', '$rootScope',
+    function($q, $rootScope){
 
     this.createUser = function(username, password, email) {
 
@@ -16,9 +16,11 @@ app.service('UserService', ['$q', '$location', '$log',
         user.signUp(null, {
             success: function(user) {
                 deferred.resolve(user);
+                $rootScope.$apply();
             },
-            error: function(error) {
+            error: function(model, error) {
                 deferred.reject(error);
+                $rootScope.$apply();
             }
         });
 

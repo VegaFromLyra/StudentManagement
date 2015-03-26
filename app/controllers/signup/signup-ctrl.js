@@ -2,22 +2,23 @@ var app = angular.module('myApp');
 
 app.controller('SignUpController', ['$scope', '$log', '$location', 'UserService',
     function($scope, $log, $location, userService) {
-
-    $scope.showConfirm = false;
-    $scope.showUserNameTaken = false;
-
+        
     $scope.signupForm = function() {
 
         if ($scope.signup_form.$valid) {
-            userService.createUser($scope.signup.username, $scope.signup.password, $scope.signup.email)
-                .then(function (createdUser) {
-                    $scope.showConfirm = true;
-                    $location.path('/signIn');
-                }).catch(function (error) {
-                    $scope.showUserNameTaken = true;
-                }).finally(function () {
-                    $log.info("finally called");
-                });
+
+            var promise = userService.createUser($scope.signup.username, $scope.signup.password, $scope.signup.email);
+
+            promise.then(function(savedUser) {
+                $scope.showConfirm = true;
+                $location.path('/signIn');
+                $log.info('User saved');
+            }, function(error) {
+                $scope.showUserNameTaken = true;
+                $scope.signup_form.username.$invalid = true;
+                $log.info('User not saved: ' + error.message);
+            });
+
         }
     }
 }]);
