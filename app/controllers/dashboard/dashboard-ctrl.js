@@ -1,14 +1,14 @@
 var app = angular.module("myApp");
 
-app.controller('DashboardController', ['$scope', '$log', '$location', '$routeParams',
-    function($scope, $log, $location, $routeParams) {
+app.controller('DashboardController',
+    ['$scope', '$log', '$location', '$routeParams', 'StudentService', 'ClassService',
+    function($scope, $log, $location, $routeParams, studentService, classService) {
 
         $scope.displayStudents = function() {
             $scope.showStudents = true;
             $scope.showClasses = false;
             $scope.showRegistrations = false;
             $scope.loadStudents();
-
         }
 
         $scope.displayClasses = function() {
@@ -23,6 +23,49 @@ app.controller('DashboardController', ['$scope', '$log', '$location', '$routePar
             $scope.showClasses = false;
             $scope.showRegistrations = true;
             $scope.loadClasses();
+        }
+
+        $scope.loadStudents = function() {
+            studentService.loadStudents().then(function(results) {
+                $scope.studentsLoaded(results);
+            });
+        }
+
+        $scope.studentsLoaded = function(results) {
+
+            $scope.students = [];
+
+            _.each(results, function(result){
+
+                var student = {}
+                student.id = result.id;
+                student.firstName = result.get('firstName');
+                student.lastName = result.get('lastName');
+                student.age = result.get('age');
+                student.photoUrl = result.get('photoUrl') || '/profile.png';
+
+
+                $scope.students.push(student)
+            });
+        }
+
+        $scope.loadClasses = function() {
+            classService.loadClasses().then(function(results) {
+                $scope.classesLoaded(results);
+            });
+        }
+
+        $scope.classesLoaded = function(classes) {
+
+            $scope.classes = [];
+
+            _.each(classes, function(classItem){
+                $scope.classes.push(classItem);
+            });
+
+            // TODO - Is there a more de-coupled
+            // way to load registrations??
+            $scope.loadRegistrations();
         }
 
         $scope.submitStudentForm = function() {
@@ -128,40 +171,11 @@ app.controller('DashboardController', ['$scope', '$log', '$location', '$routePar
             $scope.student.photoUrl = data.url;
         }
 
-        $scope.loadStudents = function() {
-
-            var Student = Parse.Object.extend("Student");
-            var query = new Parse.Query(Student);
-
-            query.find({
-                success: function(results){
-                    $scope.$apply($scope.studentsLoaded(results));
-                }
-            });
-        }
-
         $scope.studentUpdated = function() {
             $scope.shouldShowStudentForm = false;
             $scope.loadStudents();
         }
 
-        $scope.studentsLoaded = function(results) {
-
-            $scope.students = [];
-
-            _.each(results, function(result){
-
-                var student = {}
-                student.id = result.id;
-                student.firstName = result.get('firstName');
-                student.lastName = result.get('lastName');
-                student.age = result.get('age');
-                student.photoUrl = result.get('photoUrl') || '/profile.png';
-
-
-                $scope.students.push(student)
-            });
-        }
 
         $scope.findAndDeleteStudent = function(studentId) {
             var Student = Parse.Object.extend("Student");
@@ -274,31 +288,6 @@ app.controller('DashboardController', ['$scope', '$log', '$location', '$routePar
         $scope.errorSavingClass = function() {
             $scope.addClass_form.submitted = true;
             $scope.addClass_form.errorSave = true;
-        }
-
-        $scope.loadClasses = function() {
-
-            var Class = Parse.Object.extend("Class");
-            var query = new Parse.Query(Class);
-
-            query.find({
-                success: function(results){
-                    $scope.$apply($scope.classesLoaded(results));
-                }
-            });
-        }
-
-        $scope.classesLoaded = function(classes) {
-
-            $scope.classes = [];
-
-            _.each(classes, function(classItem){
-                $scope.classes.push(classItem);
-            });
-
-            // TODO - Is there a more de-coupled
-            // way to load registrations??
-            $scope.loadRegistrations();
         }
 
         $scope.addClass = function() {
