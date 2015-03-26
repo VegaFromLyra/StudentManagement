@@ -2,27 +2,27 @@ var app = angular.module('myApp', []).
 config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/', {
         controller: 'HomeController',
-        templateUrl: 'templates/home.html'
+        templateUrl: 'templates/home/home.html'
     });
         $routeProvider.when('/signUp', {
         controller: 'SignUpController',
-        templateUrl: 'templates/signUp.html'
+        templateUrl: 'templates/signUp/signUp.html'
     });
         $routeProvider.when('/signIn', {
         controller: 'SignInController',
-        templateUrl: 'templates/signIn.html'
+        templateUrl: 'templates/signIn/signIn.html'
     });
         $routeProvider.when('/dashboard', {
         controller: 'DashboardController',
-        templateUrl: 'templates/dashboard.html'
+        templateUrl: 'templates/dashboard/dashboard.html'
     });
         $routeProvider.when('/registerStudent', {
         controller: 'RegistrationController',
-        templateUrl: 'templates/registerStudent.html'
+        templateUrl: 'templates/registration/registerStudent.html'
     });
         $routeProvider.when('/deregisterStudent', {
         controller: 'RegistrationController',
-        templateUrl: 'templates/deRegisterStudent.html'
+        templateUrl: 'templates/registration/deRegisterStudent.html'
     })
         .otherwise({redirectTo: '/'});
 }]);
