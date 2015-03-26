@@ -1,43 +1,25 @@
 var app = angular.module('myApp');
 
-app.controller('SignUpController', ['$scope', '$log', '$location', function($scope, $log, $location) {
-
-    $scope.showConfirm = false;
-
-    $scope.showUserNameTaken = false;
-
+app.controller('SignUpController', ['$scope', '$log', '$location', 'UserService',
+    function($scope, $log, $location, userService) {
+        
     $scope.signupForm = function() {
 
         if ($scope.signup_form.$valid) {
 
-            var user = new Parse.User();
+            var promise = userService.createUser($scope.signup.username, $scope.signup.password, $scope.signup.email);
 
-            user.set("username", $scope.signup.username);
-            user.set("password", $scope.signup.password);
-            user.set("email", $scope.signup.email);
-
-            user.signUp(null, {
-                success: function(object) {
-                    $log.info('User saved');
-                    $scope.$apply($scope.newUserAccountCreated());
-                },
-                error: function(model, error) {
-                    $log.info('User not saved with error' + error.message);
-                    $scope.$apply($scope.errorInNewAccount());
-                }
+            promise.then(function(savedUser) {
+                $scope.showConfirm = true;
+                $location.path('/signIn');
+                $log.info('User saved');
+            }, function(error) {
+                $scope.showUserNameTaken = true;
+                $scope.signup_form.username.$invalid = true;
+                $log.info('User not saved: ' + error.message);
             });
+
         }
     }
-
-    $scope.newUserAccountCreated = function() {
-        $scope.showConfirm = true;
-
-        $location.path('/signIn');
-    }
-
-    $scope.errorInNewAccount = function() {
-        $scope.showUserNameTaken = true;
-    }
-
 }]);
 
