@@ -2,7 +2,7 @@ var app = angular.module('myApp');
 
 app.controller('SignUpController', ['$scope', '$log', '$location', 'UserService',
     function($scope, $log, $location, userService) {
-        
+
     $scope.signupForm = function() {
 
         if ($scope.signup_form.$valid) {
