@@ -179,51 +179,35 @@ app.controller('DashboardController',
 
         // Class methods
 
-        $scope.saveClassUsingForm = function(classItem) {
-
-            classItem.set("name", $scope.class.name);
-            classItem.set("buildingName", $scope.class.buildingName);
-            classItem.set("floor", $scope.class.floor);
-
-            classItem.save(null, {
-                success: function (classItem) {
-                    $scope.$apply($scope.classSaved());
-                },
-                error: function (classItem, error) {
-                    $scope.$apply($scope.errorSavingClass());
-                }
-            })
-        }
-
         $scope.submitClassForm = function() {
 
             if ($scope.addClass_form.$valid) {
 
-                var Class = Parse.Object.extend("Class");
-
                 if ($scope.class.id != null) {
 
-                    var query = new Parse.Query(Class);
-
-                    query.equalTo("objectId", $scope.class.id);
-
-                    query.find({
-                        success: function(results) {
-                            $scope.savedEditedClass(results[0]);
-                        },
-                        error: function(error) {
-                            $log.error("Could not find class with ID " + classItem.id);
-                        }
-                    })
+                    classService.findClass($scope.class.id).then(function(results){
+                       classService.editClass(
+                           results[0],
+                           $scope.class.name,
+                           $scope.class.buildingName,
+                           $scope.class.floor).then(function(results) {
+                                $scope.classSaved()},
+                           function(error) {
+                               $scope.errorSavingClass();
+                           });
+                    });
                 }
                 else {
-
-                    var classItem = new Class();
-
-                    $scope.saveClassUsingForm(classItem);
+                    classService.addClass(
+                        $scope.class.name,
+                        $scope.class.buildingName,
+                        $scope.class.floor).then(function(classItem) {
+                        $scope.classSaved()},
+                    function(error) {
+                        $scope.errorSavingClass();
+                    });
                 }
             }
-
         }
 
         $scope.classSaved = function() {
@@ -237,49 +221,34 @@ app.controller('DashboardController',
             $scope.addClass_form.errorSave = true;
         }
 
+        // TODO - Figure out how to reset form
         $scope.addClass = function() {
-
             $scope.class = {};
-
-            // TODO - Figure out how to reset form
-
             $scope.shouldShowClassForm = true;
-
             $scope.addClass_form.title = "Add Class";
-
             $scope.addClass_form.submitText = "Submit";
         }
 
         $scope.editClass = function(classItem) {
-            // Set form fields
             $scope.shouldShowClassForm = true;
-
             $scope.class = {};
-
             $scope.class.id = classItem.id;
             $scope.class.name = classItem.get('name');
             $scope.class.buildingName = classItem.get('buildingName');
-            $scope.class.room = classItem.get('floor');
-
+            $scope.class.floor = classItem.get('floor');
             $scope.addClass_form.title = "Edit Class";
-
             $scope.addClass_form.submitText = "Edit";
         }
 
-        $scope.savedEditedClass = function(classItem) {
-            $scope.saveClassUsingForm(classItem);
+        $scope.deleteClass = function(classItem) {
+            classService.deleteClass(classItem).then(function(classItem) {
+                $scope.loadClasses();
+            }, function(error) {
+                $log.error("Could not delete " + classItem.id);
+            });
         }
 
-        $scope.deleteClass = function(classItem) {
-            classItem.destroy({
-                success: function(classItem) {
-                    $scope.$apply($scope.loadClasses());
-                },
-                error: function(classItem, error) {
-                    $log.error("Could not delete " + classItem.id);
-                }
-            })
-        }
+        // Registration methods
 
         $scope.registerStudent = function(classItem) {
             $location.path('/registerStudent/').search({className : classItem.get('name')});
