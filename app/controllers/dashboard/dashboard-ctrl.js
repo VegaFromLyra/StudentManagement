@@ -86,142 +86,7 @@ app.controller('DashboardController',
             });
         }
 
-        $scope.submitStudentForm = function() {
-
-            if ($scope.addStudent_form.$valid) {
-                if ($scope.student.id != null) {
-                    $scope.editExistingStudent($scope.student);
-                }
-                else {
-                    $scope.saveNewStudent();
-                }
-            }
-        }
-
-        $scope.setStudentProperties = function(student) {
-            student.set("firstName", $scope.student.firstName);
-            student.set("lastName", $scope.student.lastName);
-            student.set("age", $scope.student.age);
-            student.set("photoUrl", $scope.student.photoUrl);
-        }
-
-        $scope.saveNewStudent = function() {
-            var Student = Parse.Object.extend("Student");
-            var student = new Student();
-
-            $scope.setStudentProperties(student);
-
-            student.save(null, {
-                success: function(student) {
-                    $scope.$apply($scope.studentUpdated())
-                },
-                error: function(student, error) {
-
-                }
-            });
-        }
-
-        $scope.editExistingStudent = function(student) {
-            var Student = Parse.Object.extend("Student");
-            var query = new Parse.Query(Student);
-
-            query.equalTo("objectId", student.id);
-
-            query.find({
-                success: function(results) {
-                    $scope.saveEditedStudent(results[0]);
-                },
-                error: function(error) {
-                    $log.error("Could not find " + student.id);
-                    $log.error("Error code: " + error.code + "Error message " + error.message);
-                }
-            });
-        }
-
-        $scope.saveEditedStudent = function(student) {
-
-            $scope.setStudentProperties(student);
-
-            student.save(null, {
-                success: function(student) {
-                    $scope.$apply($scope.studentUpdated())
-                },
-                error: function(student, error) {
-
-                }
-            });
-        }
-
-        $scope.fileNameChanged = function(element) {
-            $scope.uploadPhoto(element.files[0]);
-        }
-
-        $scope.selectFile = function() {
-            $("#file").click();
-        }
-
-        $scope.uploadPhoto = function(file) {
-            var serverUrl = 'https://api.parse.com/1/files/' + file.fileName;
-
-            $.ajax({
-                type: "POST",
-                beforeSend: function (request) {
-                    request.setRequestHeader("X-Parse-Application-Id", 'KGxHRY1i2W1plkO5rWORg8YQLaKjcwTvs9BIpjyj');
-                    request.setRequestHeader("X-Parse-REST-API-Key", 'RRlhxpPRl3B55yYBQiZ60ODVYpVgKDGaBCKpKYCJ');
-                    request.setRequestHeader("Content-Type", file.type);
-                },
-                url: serverUrl,
-                data: file,
-                processData: false,
-                contentType: false,
-                success: function (data) {
-                    $scope.$apply($scope.photoUploaded(data));
-                },
-                error: function (data) {
-                    var obj = jQuery.parseJSON(data);
-                    $log.error(obj.error);
-                }
-            });
-        }
-
-        $scope.photoUploaded = function(data) {
-            $log.info("File available at: " + data.url);
-            $scope.student.photoUrl = data.url;
-        }
-
-        $scope.studentUpdated = function() {
-            $scope.shouldShowStudentForm = false;
-            $scope.loadStudents();
-        }
-
-
-        $scope.findAndDeleteStudent = function(studentId) {
-            var Student = Parse.Object.extend("Student");
-            var query = new Parse.Query(Student);
-
-            query.equalTo("objectId", studentId);
-
-            query.find({
-                success: function(results) {
-                    $scope.deleteStudent(results[0]);
-                },
-                error: function(error) {
-                    $log.error("Could not find " + studentId);
-                    $log.error("Error code: " + error.code + "Error message " + error.message);
-                }
-            });
-        }
-
-        $scope.deleteStudent = function(student) {
-            student.destroy({
-                success: function(student) {
-                    $scope.$apply($scope.loadStudents());
-                },
-                error: function(object, error) {
-                    $log.error("Error code " + error.code + "and error message " + error.message);
-                }
-            });
-        }
+        // Student methods
 
         $scope.addStudent = function() {
 
@@ -249,6 +114,70 @@ app.controller('DashboardController',
 
             $scope.shouldShowStudentForm = true;
         }
+
+        $scope.submitStudentForm = function() {
+
+            if ($scope.addStudent_form.$valid) {
+                if ($scope.student.id != null) {
+                    studentService.findStudent($scope.student.id).then(function(results){
+
+                        studentService.modifyAndSaveStudent(
+                            results[0],
+                            $scope.student.firstName,
+                            $scope.student.lastName,
+                            $scope.student.age,
+                            $scope.student.photoUrl).then(function(student) {
+                                $scope.studentUpdated()
+                            }, function(error) {
+                                $log.error("Error code: " + error.code + "Error message " + error.message);
+                            });
+                    });
+                }
+                else {
+                    studentService.addStudent(
+                        $scope.student.firstName,
+                        $scope.student.lastName,
+                        $scope.student.age,
+                        $scope.student.photoUrl).then(function(student) {
+                            $scope.studentUpdated();
+                        }, function(error) {
+                            $log.error("Error code: " + error.code + "Error message " + error.message);
+                        })
+                }
+            }
+        }
+
+        $scope.studentUpdated = function() {
+            $scope.shouldShowStudentForm = false;
+            $scope.loadStudents();
+        }
+
+        $scope.deleteStudent = function(studentId) {
+            studentService.deleteStudent(studentId).then(function(student) {
+                $scope.loadStudents();
+            }, function(error) {
+                $log.error("Could not delete because of error code " + error.code + "and error message " + error.message);
+            });
+        }
+
+        $scope.fileNameChanged = function(element) {
+            studentService.uploadPhoto(element.files[0]).then(function(data) {
+                $scope.photoUploaded(data);
+            }, function(error) {
+                var obj = jQuery.parseJSON(error);
+                $log.error(obj.error);
+            });
+        }
+
+        $scope.selectFile = function() {
+            $("#file").click();
+        }
+
+        $scope.photoUploaded = function(data) {
+            $scope.student.photoUrl = data.url;
+        }
+
+        // Class methods
 
         $scope.saveClassUsingForm = function(classItem) {
 
