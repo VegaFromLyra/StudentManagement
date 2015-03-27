@@ -1,8 +1,8 @@
 var app = angular.module("myApp");
 
 app.service('RegistrationService',
-    ['$q', '$rootScope', 'ClassService',
-    function($q, $rootScope, classService) {
+    ['$q', '$rootScope', 'ClassService', 'StudentService',
+    function($q, $rootScope, classService, studentService) {
 
         this.loadRegistrations = function(classes) {
 
@@ -26,9 +26,6 @@ app.service('RegistrationService',
 
                     deferred.resolve(registration);
                     $rootScope.$apply();
-                    // TODO - Ask Bansal if this is the right way to notify controller
-                    // Added the apply since deferred.resolve does not notify
-                    // the controller without apply from a callback
                 });
 
                 promises.push(deferred.promise);
@@ -36,4 +33,33 @@ app.service('RegistrationService',
 
             return $q.all(promises);
         }
+
+        this.registerStudentForClass = function(firstName, lastName, classItem) {
+
+            var deferred = $q.defer();
+
+            studentService.findStudentUsingName(firstName, lastName).then(function(results) {
+
+                var student = results[0];
+                var relation = classItem.relation("contains");
+                relation.add(student);
+                classItem.save();
+
+                deferred.resolve(student);
+            }, function(error) {
+
+                deferred.reject(error);
+            });
+
+            return deferred.promise;
+        }
+
+        this.deregisterStudentFromClass = function(student, classItem) {
+            var containsRelation = classItem.relation("contains");
+            containsRelation.remove(student);
+            classItem.save();
+        }
+
+
+
 }]);

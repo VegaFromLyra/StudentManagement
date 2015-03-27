@@ -146,4 +146,31 @@ app.service('StudentService', ['$q', '$rootScope',
             return deferred.promise;
         }
 
+        this.findStudentUsingName = function(firstName, lastName) {
+            var deferred = $q.defer();
+
+            var Student = Parse.Object.extend("Student");
+            var query = new Parse.Query(Student);
+            query.equalTo("firstName", firstName);
+            query.equalTo("lastName", lastName);
+            query.find({
+                success: function(results) {
+
+                    if (results.length > 0) {
+                        deferred.resolve(results);
+                        $rootScope.$apply();
+                    } else {
+                        deferred.reject("No students found");
+                        $rootScope.$apply();
+                    }
+                },
+                error: function(error) {
+                    deferred.reject(error);
+                    $rootScope.$apply();
+                }
+            })
+
+            return deferred.promise;
+        }
+
 }]);

@@ -251,7 +251,7 @@ app.controller('DashboardController',
         // Registration methods
 
         $scope.registerStudent = function(classItem) {
-            $location.path('/registerStudent/').search({className : classItem.get('name')});
+            $location.path('/registerStudent/').search({classId : classItem.id});
         }
 
         $scope.removeStudentFromClass = function(student, classItem) {
