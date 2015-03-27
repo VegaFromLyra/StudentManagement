@@ -20,5 +20,4 @@ app.service('ClassService', ['$q', '$rootScope',
 
             return deferred.promise;
         }
-
     }]);

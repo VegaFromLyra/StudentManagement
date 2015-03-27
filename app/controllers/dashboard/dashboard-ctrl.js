@@ -1,8 +1,8 @@
 var app = angular.module("myApp");
 
 app.controller('DashboardController',
-    ['$scope', '$log', '$location', '$routeParams', 'StudentService', 'ClassService',
-    function($scope, $log, $location, $routeParams, studentService, classService) {
+    ['$scope', '$log', '$location', '$routeParams', 'StudentService', 'ClassService', 'RegistrationService',
+    function($scope, $log, $location, $routeParams, studentService, classService, registrationService) {
 
         $scope.displayStudents = function() {
             $scope.showStudents = true;
@@ -22,7 +22,7 @@ app.controller('DashboardController',
             $scope.showStudents = false;
             $scope.showClasses = false;
             $scope.showRegistrations = true;
-            $scope.loadClasses();
+            $scope.loadRegistrations();
         }
 
         $scope.loadStudents = function() {
@@ -62,10 +62,28 @@ app.controller('DashboardController',
             _.each(classes, function(classItem){
                 $scope.classes.push(classItem);
             });
+        }
 
-            // TODO - Is there a more de-coupled
-            // way to load registrations??
-            $scope.loadRegistrations();
+        $scope.loadRegistrations = function() {
+
+            $scope.registrations = [];
+
+            classService.loadClasses().then(function(results) {
+                $scope.classesLoaded(results);
+
+                // TODO - Ask Bansal if this is the right way to chain
+                registrationService.loadRegistrations($scope.classes).then(function(results){
+                    $scope.registrationsLoaded(results);
+                });
+
+            });
+        }
+
+        $scope.registrationsLoaded = function(registrations) {
+
+            _.each(registrations, function(registration) {
+                $scope.registrations.push(registration);
+            });
         }
 
         $scope.submitStudentForm = function() {
@@ -336,35 +354,6 @@ app.controller('DashboardController',
 
         $scope.registerStudent = function(classItem) {
             $location.path('/registerStudent/').search({className : classItem.get('name')});
-        }
-
-        $scope.loadRegistrations = function() {
-            $scope.registrations = [];
-
-            _.each($scope.classes, function(classItem) {
-                var relation = classItem.relation("contains");
-
-                relation.query().find({
-                    success: function(list) {
-                        $scope.$apply($scope.registrationsLoaded(classItem, list))
-                    }
-                });
-            });
-
-
-        }
-
-        $scope.registrationsLoaded = function(classItem, students) {
-
-            var registration = {};
-            registration.students = [];
-            registration.classItem = classItem;
-
-            _.each(students, function(student){
-                registration.students.push(student);
-            })
-
-            $scope.registrations.push(registration);
         }
 
         $scope.removeStudentFromClass = function(student, classItem) {
